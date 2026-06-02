@@ -1,19 +1,31 @@
 name: Build/Release
 on: push
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
+
       - name: Install Dependencies
-        run: npm install
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libarchive-tools
+          npm install
+
       - name: Build Electron App
         run: npm run build:linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:

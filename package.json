@@ -9,7 +9,7 @@
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
     "preview": "vite preview",
-    "build:linux": "electron-builder --linux AppImage"
+    "build:linux": "tsc && vite build && electron-builder --linux AppImage"
   },
   "dependencies": {
     "clsx": "^2.1.1",
