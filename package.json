@@ -9,6 +9,7 @@
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
     "preview": "vite preview",
+    "build:win": "tsc && vite build && electron-builder --win",
     "build:linux": "tsc && vite build && electron-builder --linux AppImage"
   },
   "dependencies": {
@@ -53,6 +54,21 @@
         "AppImage"
       ],
       "category": "Utility"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
     }
   }
 }
