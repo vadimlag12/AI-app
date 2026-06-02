@@ -29,7 +29,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [apiKey, _setApiKey] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState('llama3-8b-8192');
+  const [selectedModel, setSelectedModel] = useState('llama-3.3-70b-versatile');
   const [history, setHistory] = useState<ChatHistory[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

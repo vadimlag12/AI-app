@@ -38,22 +38,26 @@ export const ChatArea: React.FC = () => {
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
     let chatId = currentChatId;
+    let updatedHistory = history;
+
     if (!chatId) {
       chatId = Date.now().toString();
-      setCurrentChatId(chatId);
       const newChat = {
         id: chatId,
         title: userMessage.slice(0, 30) + (userMessage.length > 30 ? '...' : ''),
-        messages: [],
+        messages: [{ role: 'user' as const, content: userMessage }],
         createdAt: Date.now()
       };
-      setHistory(prev => [newChat, ...prev]);
+      updatedHistory = [newChat, ...history];
+      setHistory(updatedHistory);
+      setCurrentChatId(chatId);
+    } else {
+      // Add user message to history
+      updatedHistory = history.map(chat => 
+        chat.id === chatId ? { ...chat, messages: [...chat.messages, { role: 'user' as const, content: userMessage }] } : chat
+      );
+      setHistory(updatedHistory);
     }
-
-    // Add user message to history
-    setHistory(prev => prev.map(chat => 
-      chat.id === chatId ? { ...chat, messages: [...chat.messages, { role: 'user', content: userMessage }] } : chat
-    ));
 
     setIsLoading(true);
     setStreamingMessage('');
@@ -61,8 +65,9 @@ export const ChatArea: React.FC = () => {
 
     try {
       const groq = new Groq({ apiKey, dangerouslyAllowBrowser: true });
-      const currentMessages = history.find(c => c.id === chatId)?.messages || [];
-      const allMessages = [...currentMessages, { role: 'user', content: userMessage }];
+      const currentChatState = updatedHistory.find(c => c.id === chatId);
+      const currentMessages = currentChatState?.messages || [];
+      const allMessages = currentMessages;
 
       const stream = await groq.chat.completions.create({
         messages: allMessages.map(m => ({ role: m.role, content: m.content })),
